@@ -6,18 +6,17 @@ from authentication.decorators import role_required
 from django.db.models import Sum, Count
 from django.utils import timezone
 from django.http import FileResponse
-from django.conf import settings
 import os
 import tempfile
 import zipfile
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 # PDF generation with ReportLab instead of WeasyPrint
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
-from .models import Invoice, InvoiceTemplate, InvoiceItem
+from .models import Invoice, InvoiceTemplate
 from .serializers import (
     InvoiceTemplateSerializer,
     InvoiceListSerializer,

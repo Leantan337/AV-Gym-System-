@@ -2,7 +2,6 @@ from django.db import models
 import uuid
 from django.utils import timezone
 from members.models import Member
-from plans.models import MembershipPlan
 
 
 class InvoiceTemplate(models.Model):
@@ -40,6 +39,15 @@ class Invoice(models.Model):
     pdf_path = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['status']),
+            models.Index(fields=['due_date']),
+            models.Index(fields=['created_at']),
+            models.Index(fields=['member', 'status']),
+            models.Index(fields=['number']),
+        ]
 
     def save(self, *args, **kwargs):
         if not self.number:

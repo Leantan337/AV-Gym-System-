@@ -16,13 +16,11 @@ Including another URLconf
 """
 
 from django.conf import settings
-from django.conf.urls.static import static
+from django.conf.urls.static import static, serve
 from django.contrib import admin
 from django.urls import path, include
-from django.conf.urls.static import serve
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
-from members.views import MemberViewSet
 from plans.views import MembershipPlanViewSet, MembershipSubscriptionViewSet
 from checkins.views import CheckInViewSet
 from invoices.views import InvoiceViewSet

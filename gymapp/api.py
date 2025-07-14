@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from django.utils import timezone
-from django.db.models import Count, Sum
+from django.db.models import Sum
 from members.models import Member
 from plans.models import MembershipSubscription
 from invoices.models import Invoice

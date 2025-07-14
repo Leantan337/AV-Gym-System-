@@ -6,10 +6,18 @@ from .models import CheckIn
 from rest_framework_simplejwt.tokens import AccessToken
 from django.contrib.auth import get_user_model
 from channels.middleware import BaseMiddleware
-from channels.auth import AuthMiddlewareStack
 from django.contrib.auth.models import AnonymousUser
 
 User = get_user_model()
+
+
+@database_sync_to_async
+def get_user_by_id(user_id):
+    """Helper function to get user by ID asynchronously."""
+    try:
+        return User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return AnonymousUser()
 
 
 class JWTAuthMiddleware(BaseMiddleware):
@@ -24,7 +32,7 @@ class JWTAuthMiddleware(BaseMiddleware):
                 # Decode the JWT token
                 access_token = AccessToken(token)
                 user_id = access_token['user_id']
-                user = await self.get_user(user_id)
+                user = await get_user_by_id(user_id)
                 scope['user'] = user
                 print(f"WebSocket: User authenticated via URL token: {user.username}")
             except Exception as e:
@@ -34,13 +42,6 @@ class JWTAuthMiddleware(BaseMiddleware):
             scope['user'] = AnonymousUser()
 
         return await super().__call__(scope, receive, send)
-
-    @database_sync_to_async
-    def get_user(self, user_id):
-        try:
-            return User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return AnonymousUser()
 
 
 class CheckInConsumer(AsyncWebsocketConsumer):
@@ -85,7 +86,7 @@ class CheckInConsumer(AsyncWebsocketConsumer):
                     try:
                         access_token = AccessToken(token)
                         user_id = access_token['user_id']
-                        user = await self.get_user(user_id)
+                        user = await get_user_by_id(user_id)
                         if not isinstance(user, AnonymousUser):
                             self.scope['user'] = user
                             print(f"WebSocket: User authenticated via message: {user.username}")
@@ -165,13 +166,6 @@ class CheckInConsumer(AsyncWebsocketConsumer):
                 await self.send(json.dumps({'type': 'error', 'message': 'Invalid JSON format'}))
             except Exception as send_error:
                 print(f"WebSocket: Error sending JSON error: {send_error}")
-
-    @database_sync_to_async
-    def get_user(self, user_id):
-        try:
-            return User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return AnonymousUser()
 
     @database_sync_to_async
     def get_check_in_stats(self):

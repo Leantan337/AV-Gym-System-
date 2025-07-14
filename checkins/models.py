@@ -13,5 +13,12 @@ class CheckIn(models.Model):
     location = models.CharField(max_length=100, blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['check_in_time']),
+            models.Index(fields=['check_out_time']),
+            models.Index(fields=['member', 'check_in_time']),
+        ]
+
     def __str__(self):
         return f'{self.member.full_name} - {self.check_in_time}'

@@ -2,16 +2,13 @@ from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from authentication.permissions import IsStaffOrAdmin, IsTrainerOrHigher, IsOwnerOrStaff
-from authentication.decorators import role_required
-from django.db.models import Count, Q
+from django.db.models import Q
 from django.utils import timezone
 from django.http import HttpResponse
 from datetime import timedelta
-import os
 from .models import Member
 from .serializers import MemberSerializer
 from .services import IDCardGenerator
-import tempfile
 
 
 class MemberViewSet(viewsets.ModelViewSet):
